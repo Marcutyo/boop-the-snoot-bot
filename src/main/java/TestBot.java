@@ -1,8 +1,10 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class TestBot extends TelegramLongPollingBot {
@@ -28,6 +30,21 @@ public class TestBot extends TelegramLongPollingBot {
                         break;
                     default:
                         sendNewMessage(chatId, "Noooo this is not valid! 🐶");
+                }
+            } else if (userMessage.hasSticker()) {
+                Sticker userSticker = userMessage.getSticker();
+                String userStickerId = userSticker.getFileId();
+                Sticker stickerResponse = new Sticker();
+                stickerResponse.setFileId(userStickerId);
+
+                try {
+                    execute(SendSticker.builder()
+                            .chatId(chatId)
+                            .sticker(new InputFile(userStickerId))
+                            .build()
+                    );
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
                 }
             } else {
                 sendNewMessage(chatId, "No plz just send me text. 🐶");
