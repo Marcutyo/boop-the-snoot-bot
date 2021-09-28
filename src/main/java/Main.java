@@ -10,6 +10,6 @@ public class Main {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        System.out.println("LoggingTestBot successfully started!");
+        System.out.println("TestBot successfully started!");
     }
 }
