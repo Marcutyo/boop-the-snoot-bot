@@ -1,11 +1,17 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
+import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+
+import java.util.List;
+import java.util.Random;
 
 public class TestBot extends TelegramLongPollingBot {
 
@@ -20,41 +26,61 @@ public class TestBot extends TelegramLongPollingBot {
 
                 switch (userCommand) {
                     case "/start":
-                        sendNewMessage(chatId, "Start");
+                        sendNewMessage(chatId, null, "Start");
                         break;
                     case "/i_wamt_doggo_pics":
-                        sendNewMessage(chatId, "Doggo pic");
+                        sendNewMessage(chatId, null, "Doggo pic");
                         break;
                     case "/i_wamt_doggo_vids":
-                        sendNewMessage(chatId, "Doggo vid");
+                        sendNewMessage(chatId, null, "Doggo vid");
+                        break;
+                    case "/i_wamt_doggo_stickers":
+                        try {
+                            List<Sticker> doggoStickerSet = sendApiMethod(
+                                    GetStickerSet.builder()
+                                            .name("BunJoe")
+                                            .build()
+                            ).getStickers();
+                            Random r = new Random();
+                            Sticker stickerResponse = doggoStickerSet.get(r.nextInt(doggoStickerSet.size()));
+                            try {
+                                execute(SendSticker.builder()
+                                        .chatId(chatId)
+                                        .sticker(new InputFile(stickerResponse.getFileId()))
+                                        .build());
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     default:
-                        sendNewMessage(chatId, "Noooo this is not valid! 🐶");
-                }
-            } else if (userMessage.hasSticker()) {
-                Sticker userSticker = userMessage.getSticker();
-                String userStickerId = userSticker.getFileId();
-                Sticker stickerResponse = new Sticker();
-                stickerResponse.setFileId(userStickerId);
-
-                try {
-                    execute(SendSticker.builder()
-                            .chatId(chatId)
-                            .sticker(new InputFile(userStickerId))
-                            .build()
-                    );
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                        try {
+                            execute(SendMessage.builder()
+                                    .chatId(chatId)
+                                    .parseMode("HTML")
+                                    .text("<b><u>Noooo this is not valid!</u></b> 🐶")
+                                    .build()
+                            );
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
                 }
             } else {
-                sendNewMessage(chatId, "No plz just send me text. 🐶");
+                sendNewMessage(chatId, null, "No plz just send me text. 🐶");
             }
         }
     }
 
-    public void sendNewMessage(String chatId, String text) {
+    public void sendNewMessage(String chatId, String parseMode, String text) {
         try {
-            execute(new SendMessage(chatId, text));
+            execute(SendMessage.builder()
+                    .chatId(chatId)
+                    .parseMode(parseMode)
+                    .text(text)
+                    .build());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
