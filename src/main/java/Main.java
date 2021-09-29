@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new TestBot());
+            botsApi.registerBot(new DoggoBot());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
