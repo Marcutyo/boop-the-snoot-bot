@@ -2,3 +2,7 @@ spring:
   output:
     ansi:
       enabled: always
+
+my-bot:
+  name: "marcutyo_echo_bot"
+  api-key: "1938694946:AAEI7yLNN6-qLon_e0ZISW-HCVdjpLskf28"
