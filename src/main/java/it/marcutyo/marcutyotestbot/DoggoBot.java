@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import java.util.List;
 import java.util.Random;
 
+@Component
 public class DoggoBot extends TelegramLongPollingBot {
 
     @Override
