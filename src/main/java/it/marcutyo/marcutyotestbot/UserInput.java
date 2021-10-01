@@ -2,12 +2,13 @@ package it.marcutyo.marcutyotestbot;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 public class UserInput {
     private boolean command;
     private String verb;
     private String chatId;
-    private String userId;
+    private User user;
 
     public UserInput(Update update) {
         String data = getData(update);
@@ -29,6 +30,6 @@ public class UserInput {
 
     private void setIds(Message message) {
         this.chatId = message.getChatId().toString();
-        this.userId = message.getFrom().getId().toString();
+        this.user = message.getFrom();
     }
 }
