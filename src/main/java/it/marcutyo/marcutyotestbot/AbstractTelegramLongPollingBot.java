@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public abstract class AbstractTelegramLongPollingBot extends TelegramLongPollingBot {
     protected String botUsername;
     protected String apiKey;
+    protected final String HELP_COMMAND = "help";
 
     @Override
     public String getBotUsername() {
