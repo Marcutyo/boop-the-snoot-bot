@@ -1,0 +1,8 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+
+my-bot:
+  name: "boop_the_snoot_bot"
+  api-key: "2031760153:AAHzt0yp0LO5svpYzdH8V8RnUHSjIvmvKlw"
