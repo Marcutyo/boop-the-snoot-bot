@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Getter
 @Component
 public class ClientComponent {
-    private final String RANDOM_DOG_URL = "https://random.dog";
+    private final String RANDOM_DOG_URL = "https://random.dog/";
 
     private final WebClient webClient;
 
@@ -18,7 +18,7 @@ public class ClientComponent {
     public String getResponse(String fileExt) {
         return this.webClient
                 .get()
-                .uri("/woof?include={fileExt}", fileExt)
+                .uri("woof?include={fileExt}", fileExt)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
