@@ -88,7 +88,17 @@ public class DoggoBotProcessor {
         ) {
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
+                int n = new Random().nextInt(3);
+                switch (n) {
+                    case 0:
+                        getBOOP_VID_COMMAND().execute(absSender, user, chat, strings);
+                        break;
+                    case 1:
+                        getBOOP_PIC_COMMAND().execute(absSender, user, chat, strings);
+                        break;
+                    case 2:
+                        getBOOP_STICKER_COMMAND().execute(absSender, user, chat, strings);
+                }
             }
         };
     }
