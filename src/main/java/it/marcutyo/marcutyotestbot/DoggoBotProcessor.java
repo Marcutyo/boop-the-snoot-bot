@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.helpCommand.HelpCommand;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -57,9 +58,15 @@ public class DoggoBotProcessor {
                 "🇮🇹 per ricevere una GIF casuale di un 𝒹𝑜𝑔𝑔𝑜 🐕\n" +
                         "🇬🇧🇺🇸 to get a random 𝒹𝑜𝑔𝑔𝑜 gif"
         ) {
+            @SneakyThrows
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
+                absSender.execute(
+                        new SendAnimation(
+                                chat.getId().toString(),
+                                new InputFile(clientComponent.getDoggoUrl("mp4,gif,webm"))
+                        )
+                );
             }
         };
 
