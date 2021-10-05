@@ -2,10 +2,12 @@ package it.marcutyo.marcutyotestbot;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.helpCommand.HelpCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
@@ -14,11 +16,13 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 @Getter
 @Component
 public class DoggoBotProcessor {
@@ -59,12 +63,22 @@ public class DoggoBotProcessor {
             @SneakyThrows
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-                absSender.execute(
-                        new SendPhoto(
-                                chat.getId().toString(),
-                                new InputFile(clientComponent.getDoggoUrl("jpg,jpeg,png"))
-                        )
-                );
+                try {
+                    absSender.execute(
+                            new SendPhoto(
+                                    chat.getId().toString(),
+                                    new InputFile(clientComponent.getDoggoUrl("jpg,jpeg,png"))
+                            )
+                    );
+                } catch (TelegramApiException e) {
+                    log.error(
+                            "Unable to send pic to the user {} with ID {}",
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getId()
+                    );
+                    e.printStackTrace();
+                    sendErrorMessage(absSender, user, chat);
+                }
             }
         };
 
@@ -73,15 +87,24 @@ public class DoggoBotProcessor {
                 "🇮🇹 per ricevere una GIF casuale di un 𝒹𝑜𝑔𝑔𝑜 🐕\n" +
                         "🇬🇧🇺🇸 to get a random 𝒹𝑜𝑔𝑔𝑜 gif"
         ) {
-            @SneakyThrows
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-                absSender.execute(
-                        new SendAnimation(
-                                chat.getId().toString(),
-                                new InputFile(clientComponent.getDoggoUrl("mp4,gif,webm"))
-                        )
-                );
+                try {
+                    absSender.execute(
+                            new SendAnimation(
+                                    chat.getId().toString(),
+                                    new InputFile(clientComponent.getDoggoUrl("mp4,gif,webm"))
+                            )
+                    );
+                } catch (TelegramApiException e) {
+                    log.error(
+                            "Unable to send vid to the user {} with ID {}",
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getId()
+                    );
+                    e.printStackTrace();
+                    sendErrorMessage(absSender, user, chat);
+                }
             }
         };
 
@@ -90,21 +113,30 @@ public class DoggoBotProcessor {
                 "🇮🇹 per ricevere uno sticker casuale di un 𝒹𝑜𝑔𝑔𝑜 🦮\n" +
                         "🇬🇧🇺🇸 to get a random 𝒹𝑜𝑔𝑔𝑜 sticker"
         ) {
-            @SneakyThrows
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-                String randStickerSetName = STICKER_SET_NAMES
-                        .get(new Random().nextInt(STICKER_SET_NAMES.size()));
-                List<Sticker> stickerSet = absSender
-                        .execute(new GetStickerSet(randStickerSetName)).getStickers();
-                absSender.execute(
-                        new SendSticker(
-                                chat.getId().toString(),
-                                new InputFile(
-                                        stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId()
-                                )
-                        )
-                );
+                try {
+                    String randStickerSetName = STICKER_SET_NAMES
+                            .get(new Random().nextInt(STICKER_SET_NAMES.size()));
+                    List<Sticker> stickerSet = absSender
+                            .execute(new GetStickerSet(randStickerSetName)).getStickers();
+                    absSender.execute(
+                            new SendSticker(
+                                    chat.getId().toString(),
+                                    new InputFile(
+                                            stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId()
+                                    )
+                            )
+                    );
+                } catch (TelegramApiException e) {
+                    log.error(
+                            "Unable to send sticker to the user {} with ID {}",
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getId()
+                    );
+                    e.printStackTrace();
+                    sendErrorMessage(absSender, user, chat);
+                }
             }
         };
 
@@ -130,5 +162,21 @@ public class DoggoBotProcessor {
         };
     }
 
-
+    private void sendErrorMessage(AbsSender absSender, User user, Chat chat) {
+        try {
+            absSender.execute(
+                    new SendMessage(
+                            chat.getId().toString(),
+                            "Oops! Something went wrong, I could not boop the snoot! Try again! 🐶"
+                    )
+            );
+        } catch (TelegramApiException e) {
+            log.error(
+                    "Unable to send error message to the user {} with ID {}",
+                    user.getFirstName() + " " + user.getLastName(),
+                    user.getId()
+            );
+            e.printStackTrace();
+        }
+    }
 }
