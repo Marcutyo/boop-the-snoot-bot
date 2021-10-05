@@ -1,4 +1,4 @@
-package it.marcutyo.marcutyotestbot;
+package it.marcutyo.boopthesnootbot;
 
 import lombok.Getter;
 import org.springframework.stereotype.Component;

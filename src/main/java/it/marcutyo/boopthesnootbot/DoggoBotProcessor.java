@@ -1,4 +1,4 @@
-package it.marcutyo.marcutyotestbot;
+package it.marcutyo.boopthesnootbot;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
