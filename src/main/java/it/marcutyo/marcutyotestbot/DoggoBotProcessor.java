@@ -64,11 +64,18 @@ public class DoggoBotProcessor {
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
                 try {
+                    String doggoUrl = clientComponent.getDoggoUrl("jpg,jpeg,png");
                     absSender.execute(
                             new SendPhoto(
                                     chat.getId().toString(),
-                                    new InputFile(clientComponent.getDoggoUrl("jpg,jpeg,png"))
+                                    new InputFile(doggoUrl)
                             )
+                    );
+                    log.info(
+                            "Successfully sent pic with URL {} to the user {} with ID {}",
+                            doggoUrl,
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getId()
                     );
                 } catch (TelegramApiException e) {
                     log.error(
@@ -90,11 +97,18 @@ public class DoggoBotProcessor {
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
                 try {
+                    String doggoUrl = clientComponent.getDoggoUrl("mp4,gif,webm");
                     absSender.execute(
                             new SendAnimation(
                                     chat.getId().toString(),
-                                    new InputFile(clientComponent.getDoggoUrl("mp4,gif,webm"))
+                                    new InputFile(doggoUrl)
                             )
+                    );
+                    log.info(
+                            "Successfully sent vid with URL {} to the user {} with ID {}",
+                            doggoUrl,
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getId()
                     );
                 } catch (TelegramApiException e) {
                     log.error(
@@ -120,13 +134,19 @@ public class DoggoBotProcessor {
                             .get(new Random().nextInt(STICKER_SET_NAMES.size()));
                     List<Sticker> stickerSet = absSender
                             .execute(new GetStickerSet(randStickerSetName)).getStickers();
+                    String doggoStickerId = stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId();
                     absSender.execute(
                             new SendSticker(
                                     chat.getId().toString(),
-                                    new InputFile(
-                                            stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId()
-                                    )
+                                    new InputFile(doggoStickerId)
                             )
+                    );
+                    log.info(
+                            "Successfully sent sticker with ID {} from sticker set {} to the user {} with ID {}",
+                            doggoStickerId,
+                            randStickerSetName,
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getId()
                     );
                 } catch (TelegramApiException e) {
                     log.error(
@@ -157,7 +177,9 @@ public class DoggoBotProcessor {
                         break;
                     case 2:
                         getBOOP_STICKER_COMMAND().execute(absSender, user, chat, strings);
+                        break;
                 }
+                log.info("Successfully booped the snoot");
             }
         };
     }
