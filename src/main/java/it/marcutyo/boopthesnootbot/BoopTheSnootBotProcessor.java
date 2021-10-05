@@ -25,7 +25,7 @@ import java.util.Random;
 @Slf4j
 @Getter
 @Component
-public class DoggoBotProcessor {
+public class BoopTheSnootBotProcessor {
     private final HelpCommand HELP_COMMAND;
 
     private final BotCommand BOOP_PIC_COMMAND;
@@ -37,7 +37,7 @@ public class DoggoBotProcessor {
 
     private final ClientComponent clientComponent;
 
-    public DoggoBotProcessor(ClientComponent clientComponent) {
+    public BoopTheSnootBotProcessor(ClientComponent clientComponent) {
         this.clientComponent = clientComponent;
 
         this.STICKER_SET_NAMES.add("BunJoe");

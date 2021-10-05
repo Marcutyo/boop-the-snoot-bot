@@ -13,31 +13,31 @@ import javax.annotation.PostConstruct;
 
 @Slf4j
 @Component
-public class DoggoBot extends TelegramLongPollingCommandBot {
+public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     private final String botUsername;
     private final String apiKey;
 
-    private final DoggoBotProcessor doggoBotProcessor;
+    private final BoopTheSnootBotProcessor boopTheSnootBotProcessor;
 
-    public DoggoBot(
+    public BoopTheSnootBot(
             @Value("${my-bot.name}") String botUsername,
             @Value("${my-bot.api-key}") String apiKey,
-            DoggoBotProcessor doggoBotProcessor) {
+            BoopTheSnootBotProcessor boopTheSnootBotProcessor) {
         super(new DefaultBotOptions(), true);
         this.botUsername = botUsername;
         this.apiKey = apiKey;
-        this.doggoBotProcessor = doggoBotProcessor;
+        this.boopTheSnootBotProcessor = boopTheSnootBotProcessor;
     }
 
     @PostConstruct
     private void initCommandRegistry() {
         registerDefaultAction(this::processDefaultCommand);
         registerAll(
-                doggoBotProcessor.getHELP_COMMAND(),
-                doggoBotProcessor.getBOOP_PIC_COMMAND(),
-                doggoBotProcessor.getBOOP_VID_COMMAND(),
-                doggoBotProcessor.getBOOP_STICKER_COMMAND(),
-                doggoBotProcessor.getBOOP_THE_SNOOT()
+                boopTheSnootBotProcessor.getHELP_COMMAND(),
+                boopTheSnootBotProcessor.getBOOP_PIC_COMMAND(),
+                boopTheSnootBotProcessor.getBOOP_VID_COMMAND(),
+                boopTheSnootBotProcessor.getBOOP_STICKER_COMMAND(),
+                boopTheSnootBotProcessor.getBOOP_THE_SNOOT()
         );
     }
 
