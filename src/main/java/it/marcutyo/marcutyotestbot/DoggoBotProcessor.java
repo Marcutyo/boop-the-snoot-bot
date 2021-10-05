@@ -1,12 +1,17 @@
 package it.marcutyo.marcutyotestbot;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.helpCommand.HelpCommand;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+
+import java.util.Random;
 
 @Getter
 @Component
@@ -18,7 +23,10 @@ public class DoggoBotProcessor {
     private final BotCommand BOOP_STICKER_COMMAND;
     private final BotCommand BOOP_THE_SNOOT;
 
-    public DoggoBotProcessor() {
+    private final ClientComponent clientComponent;
+
+    public DoggoBotProcessor(ClientComponent clientComponent) {
+        this.clientComponent = clientComponent;
 
         this.HELP_COMMAND = new HelpCommand(
                 "help",
@@ -32,9 +40,15 @@ public class DoggoBotProcessor {
                 "🇮🇹 per ricevere una immagine casuale di un 𝒹𝑜𝑔𝑔𝑜 🐕‍🦺\n" +
                         "🇬🇧🇺🇸 to get a random 𝒹𝑜𝑔𝑔𝑜 pic"
         ) {
+            @SneakyThrows
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
+                absSender.execute(
+                        new SendPhoto(
+                                chat.getId().toString(),
+                                new InputFile(clientComponent.getDoggoUrl("jpg,jpeg,png"))
+                        )
+                );
             }
         };
 
