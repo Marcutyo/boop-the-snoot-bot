@@ -7,11 +7,16 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.helpCommand.HelpCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Getter
@@ -24,10 +29,20 @@ public class DoggoBotProcessor {
     private final BotCommand BOOP_STICKER_COMMAND;
     private final BotCommand BOOP_THE_SNOOT;
 
+    private final List<String> STICKER_SET_NAMES = new ArrayList<>();
+
     private final ClientComponent clientComponent;
 
     public DoggoBotProcessor(ClientComponent clientComponent) {
         this.clientComponent = clientComponent;
+
+        this.STICKER_SET_NAMES.add("BunJoe");
+        this.STICKER_SET_NAMES.add("Cheemsburbger");
+        this.STICKER_SET_NAMES.add("bellycorgi");
+        this.STICKER_SET_NAMES.add("DonutTheDog");
+        this.STICKER_SET_NAMES.add("akio_vk");
+        this.STICKER_SET_NAMES.add("Vasya_Piton");
+        this.STICKER_SET_NAMES.add("stickerdogs");
 
         this.HELP_COMMAND = new HelpCommand(
                 "help",
@@ -75,9 +90,21 @@ public class DoggoBotProcessor {
                 "🇮🇹 per ricevere uno sticker casuale di un 𝒹𝑜𝑔𝑔𝑜 🦮\n" +
                         "🇬🇧🇺🇸 to get a random 𝒹𝑜𝑔𝑔𝑜 sticker"
         ) {
+            @SneakyThrows
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
+                String randStickerSetName = STICKER_SET_NAMES
+                        .get(new Random().nextInt(STICKER_SET_NAMES.size()));
+                List<Sticker> stickerSet = absSender
+                        .execute(new GetStickerSet(randStickerSetName)).getStickers();
+                absSender.execute(
+                        new SendSticker(
+                                chat.getId().toString(),
+                                new InputFile(
+                                        stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId()
+                                )
+                        )
+                );
             }
         };
 
