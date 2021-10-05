@@ -1,100 +1,64 @@
 package it.marcutyo.marcutyotestbot;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
-import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import java.util.List;
-import java.util.Random;
+import javax.annotation.PostConstruct;
 
+@Slf4j
 @Component
-public class DoggoBot extends TelegramLongPollingBot {
+public class DoggoBot extends TelegramLongPollingCommandBot {
+    private final String botUsername;
+    private final String apiKey;
 
-    @Override
-    public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            Message userMessage = update.getMessage();
-            String chatId = userMessage.getChatId().toString();
+    private final DoggoBotProcessor doggoBotProcessor;
 
-            if (userMessage.hasText()) {
-                String userCommand = userMessage.getText();
-
-                switch (userCommand) {
-                    case "/start":
-                        sendNewMessage(chatId, null, "Start");
-                        break;
-                    case "/i_wamt_doggo_pics":
-                        sendNewMessage(chatId, null, "Doggo pic");
-                        break;
-                    case "/i_wamt_doggo_vids":
-                        sendNewMessage(chatId, null, "Doggo vid");
-                        break;
-                    case "/i_wamt_doggo_stickers":
-                        try {
-                            List<Sticker> doggoStickerSet = sendApiMethod(
-                                    GetStickerSet.builder()
-                                            .name("BunJoe")
-                                            .build()
-                            ).getStickers();
-                            Random r = new Random();
-                            Sticker stickerResponse = doggoStickerSet.get(r.nextInt(doggoStickerSet.size()));
-                            try {
-                                execute(SendSticker.builder()
-                                        .chatId(chatId)
-                                        .sticker(new InputFile(stickerResponse.getFileId()))
-                                        .build());
-                            } catch (TelegramApiException e) {
-                                e.printStackTrace();
-                            }
-
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    default:
-                        try {
-                            execute(SendMessage.builder()
-                                    .chatId(chatId)
-                                    .parseMode("HTML")
-                                    .text("<b><u>Noooo this is not valid!</u></b> 🐶")
-                                    .build()
-                            );
-                        } catch (TelegramApiException e) {
-                            e.printStackTrace();
-                        }
-                }
-            } else {
-                sendNewMessage(chatId, null, "No plz just send me text. 🐶");
-            }
-        }
+    public DoggoBot(
+            @Value("${my-bot.name}") String botUsername,
+            @Value("${my-bot.api-key}") String apiKey,
+            DoggoBotProcessor doggoBotProcessor) {
+        super(new DefaultBotOptions(), true);
+        this.botUsername = botUsername;
+        this.apiKey = apiKey;
+        this.doggoBotProcessor = doggoBotProcessor;
     }
 
-    public void sendNewMessage(String chatId, String parseMode, String text) {
-        try {
-            execute(SendMessage.builder()
-                    .chatId(chatId)
-                    .parseMode(parseMode)
-                    .text(text)
-                    .build());
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+    @PostConstruct
+    private void initCommandRegistry() {
+        registerDefaultAction(this::processDefaultCommand);
+        registerAll(
+                doggoBotProcessor.getHELP_COMMAND(),
+                doggoBotProcessor.getBOOP_PIC_COMMAND(),
+                doggoBotProcessor.getBOOP_VID_COMMAND(),
+                doggoBotProcessor.getBOOP_STICKER_COMMAND(),
+                doggoBotProcessor.getBOOP_THE_SNOOT()
+        );
+    }
+
+    private void processDefaultCommand(AbsSender absSender, Message message) {
+        getRegisteredCommand("help").processMessage(absSender, message, new String[]{});
+        log.info("Processed default command.");
+    }
+
+    @Override
+    public void processNonCommandUpdate(Update update) {
+        log.info("User typed not valid command.");
+        processDefaultCommand(this, update.getMessage());
     }
 
     @Override
     public String getBotUsername() {
-        return "marcutyo_echo_bot";
+        return this.botUsername;
     }
 
     @Override
     public String getBotToken() {
-        return "1938694946:AAEI7yLNN6-qLon_e0ZISW-HCVdjpLskf28";
+        return this.apiKey;
     }
 }

@@ -1,20 +1,23 @@
 package it.marcutyo.marcutyotestbot;
 
+import lombok.Getter;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+@Getter
 public class UserInput {
     private String command = "help";
     private String[] arguments = new String[0];
-    private String chatId;
+    private Chat chat;
     private User user;
 
 
     public UserInput(Update update) {
         if (update.hasMessage()) {
             Message message = update.getMessage();
-            setChatId(message);
+            setChat(message);
             setUser(message);
 
             if (message.hasText() && message.getText().startsWith("/")) {
@@ -25,8 +28,8 @@ public class UserInput {
         }
     }
 
-    private void setChatId(Message message) {
-        this.chatId = message.getChatId().toString();
+    private void setChat(Message message) {
+        this.chat = message.getChat();
     }
 
     private void setUser(Message message) {
