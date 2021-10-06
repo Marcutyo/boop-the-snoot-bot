@@ -58,29 +58,7 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     }
 
     private void processInlineQuery(Update update) {
-        InlineQuery inlineQuery = update.getInlineQuery();
-        String inlineQueryId = inlineQuery.getId();
-        InlineQueryResultPhoto inlineQueryResultPhoto;
-        if (inlineQuery.getQuery().equals("cane")) {
-            inlineQueryResultPhoto = new InlineQueryResultPhoto(
-                    inlineQueryId, "https://random.dog/2b77b03c-3073-454e-957b-867580b3d005.jpg"
-            );
-            inlineQueryResultPhoto.setThumbUrl("https://random.dog/2b77b03c-3073-454e-957b-867580b3d005.jpg");
-        } else if (inlineQuery.getQuery().equals("catto")) {
-            inlineQueryResultPhoto = new InlineQueryResultPhoto(
-                    inlineQueryId, "https://purr.objects-us-east-1.dream.io/i/vKNYB.jpg"
-            );
-            inlineQueryResultPhoto.setThumbUrl("https://purr.objects-us-east-1.dream.io/i/vKNYB.jpg");
-        } else return;
-        List<InlineQueryResult> inlineQueryResults = new ArrayList<>();
-        inlineQueryResults.add(inlineQueryResultPhoto);
-        try {
-            execute(new AnswerInlineQuery(
-                    inlineQueryId, inlineQueryResults)
-            );
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        boopTheSnootInlineQueryProcessor.processInlineQuery(this, update);
     }
 
     @Override
