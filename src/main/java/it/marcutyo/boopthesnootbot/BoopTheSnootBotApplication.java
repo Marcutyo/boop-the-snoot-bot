@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Slf4j
 @SpringBootApplication
-public class MarcutyoTestBotApplication {
+public class BoopTheSnootBotApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MarcutyoTestBotApplication.class, args);
+        SpringApplication.run(BoopTheSnootBotApplication.class, args);
         log.info("TestBot successfully started!");
     }
 }
