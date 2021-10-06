@@ -1,0 +1,1 @@
+worker: sh target/bin/boop-the-snoot-bot
