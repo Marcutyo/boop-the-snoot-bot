@@ -5,19 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
-import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultPhoto;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -59,14 +51,15 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     }
 
     private void processInlineQuery(Update update) {
+        log.info("User update is an inline query. Processing.");
         boopTheSnootInlineQueryProcessor.processInlineQuery(this, update);
+        log.info("Processed inline query.");
     }
 
     @Override
     public void processNonCommandUpdate(Update update) {
         log.info("User message is not a command.");
         if (update.hasInlineQuery()) {
-            log.info("User update is an inline query.");
             processInlineQuery(update);
             return;
         }
