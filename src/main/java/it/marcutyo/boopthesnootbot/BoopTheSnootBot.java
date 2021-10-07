@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import javax.annotation.PostConstruct;
@@ -50,9 +51,9 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
         log.info("Processed default command.");
     }
 
-    private void processInlineQuery(Update update) {
+    private void processInlineQuery(InlineQuery inlineQuery) {
         log.info("User update is an inline query. Processing.");
-        boopTheSnootInlineQueryProcessor.processInlineQuery(this, update);
+        boopTheSnootInlineQueryProcessor.processInlineQuery(this, inlineQuery);
         log.info("Processed inline query.");
     }
 
@@ -60,7 +61,7 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     public void processNonCommandUpdate(Update update) {
         log.info("User message is not a command.");
         if (update.hasInlineQuery()) {
-            processInlineQuery(update);
+            processInlineQuery(update.getInlineQuery());
             return;
         }
         if (update.getMessage().isReply() || update.getMessage().hasViaBot()) {
