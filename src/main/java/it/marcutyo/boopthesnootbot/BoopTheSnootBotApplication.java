@@ -17,8 +17,8 @@ public class BoopTheSnootBotApplication {
     }
 
     @Bean
-    public List<String> stickerSetNames () {
-        List<String> stickerSetNames =  new ArrayList<>();
+    public List<String> stickerSetNames() {
+        List<String> stickerSetNames = new ArrayList<>();
         stickerSetNames.add("BunJoe");
         stickerSetNames.add("Cheemsburbger");
         stickerSetNames.add("bellycorgi");
