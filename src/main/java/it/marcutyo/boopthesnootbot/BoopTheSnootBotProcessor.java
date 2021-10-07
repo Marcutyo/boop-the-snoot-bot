@@ -18,7 +18,6 @@ import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -33,20 +32,14 @@ public class BoopTheSnootBotProcessor {
     private final BotCommand BOOP_STICKER_COMMAND;
     private final BotCommand BOOP_THE_SNOOT;
 
-    private final List<String> STICKER_SET_NAMES = new ArrayList<>();
-
     private final ClientComponent clientComponent;
+    private final List<String> stickerSetNames;
 
-    public BoopTheSnootBotProcessor(ClientComponent clientComponent) {
+    public BoopTheSnootBotProcessor(
+            ClientComponent clientComponent,
+            List<String> stickerSetNames) {
         this.clientComponent = clientComponent;
-
-        this.STICKER_SET_NAMES.add("BunJoe");
-        this.STICKER_SET_NAMES.add("Cheemsburbger");
-        this.STICKER_SET_NAMES.add("bellycorgi");
-        this.STICKER_SET_NAMES.add("DonutTheDog");
-        this.STICKER_SET_NAMES.add("akio_vk");
-        this.STICKER_SET_NAMES.add("Vasya_Piton");
-        this.STICKER_SET_NAMES.add("stickerdogs");
+        this.stickerSetNames = stickerSetNames;
 
         this.HELP_COMMAND = new HelpCommand(
                 "help",
@@ -130,8 +123,8 @@ public class BoopTheSnootBotProcessor {
             @Override
             public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
                 try {
-                    String randStickerSetName = STICKER_SET_NAMES
-                            .get(new Random().nextInt(STICKER_SET_NAMES.size()));
+                    String randStickerSetName = stickerSetNames
+                            .get(new Random().nextInt(stickerSetNames.size()));
                     List<Sticker> stickerSet = absSender
                             .execute(new GetStickerSet(randStickerSetName)).getStickers();
                     String doggoStickerId = stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId();
