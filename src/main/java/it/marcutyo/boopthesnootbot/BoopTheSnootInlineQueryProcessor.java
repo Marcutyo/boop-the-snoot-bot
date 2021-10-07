@@ -69,24 +69,26 @@ public class BoopTheSnootInlineQueryProcessor {
                             .build()
             ));
         } else if (inlineQueryText.equalsIgnoreCase("sticker")) {
-            String randStickerSetName = stickerSetNames
-                    .get(new Random().nextInt(stickerSetNames.size()));
-            try {
-                List<Sticker> stickerSet = absSender
-                        .execute(new GetStickerSet(randStickerSetName)).getStickers();
-                List<String> doggoStickerIds = Stream
-                        .generate(() -> stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId())
-                                .distinct().limit(3).collect(Collectors.toList());
+            List<String> doggoStickerIds = Stream
+                    .generate(() -> {
+                        try {
+                            String randStickerSetName = stickerSetNames
+                                    .get(new Random().nextInt(stickerSetNames.size()));
+                            List<Sticker> stickerSet = absSender
+                                    .execute(new GetStickerSet(randStickerSetName)).getStickers();
+                            return stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId();
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }).distinct().limit(3).collect(Collectors.toList());
 
-                doggoStickerIds.forEach(doggoStickerId -> inlineQueryResults.add(
-                        InlineQueryResultCachedSticker.builder()
-                                .id(UUID.randomUUID().toString())
-                                .stickerFileId(doggoStickerId)
-                                .build()
-                ));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+            doggoStickerIds.forEach(doggoStickerId -> inlineQueryResults.add(
+                    InlineQueryResultCachedSticker.builder()
+                            .id(UUID.randomUUID().toString())
+                            .stickerFileId(doggoStickerId)
+                            .build()
+            ));
         }
         try {
             absSender.execute(AnswerInlineQuery.builder()
