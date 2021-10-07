@@ -53,6 +53,7 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     }
 
     private void processDefaultCommand(AbsSender absSender, Message message) {
+        log.info("Processing default command.");
         getRegisteredCommand("help").processMessage(absSender, message, new String[]{});
         log.info("Processed default command.");
     }
@@ -63,11 +64,16 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
 
     @Override
     public void processNonCommandUpdate(Update update) {
+        log.info("User message is not a command.");
         if (update.hasInlineQuery()) {
+            log.info("User update is an inline query.");
             processInlineQuery(update);
             return;
         }
-        log.info("User typed not valid command.");
+        if (update.getMessage().isReply() || update.getMessage().hasViaBot()) {
+            log.info("User message is reply or has via bot. Not processing default command.");
+            return;
+        }
         processDefaultCommand(this, update.getMessage());
     }
 
