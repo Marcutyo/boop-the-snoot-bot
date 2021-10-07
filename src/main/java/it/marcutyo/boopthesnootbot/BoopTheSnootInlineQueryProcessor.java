@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultMpeg4Gif;
@@ -34,10 +34,11 @@ public class BoopTheSnootInlineQueryProcessor {
         this.stickerSetNames = stickerSetNames;
     }
 
-    public void processInlineQuery(AbsSender absSender, Update update) {
-        InlineQuery inlineQuery = update.getInlineQuery();
+    public void processInlineQuery(AbsSender absSender, InlineQuery inlineQuery) {
         String inlineQueryId = inlineQuery.getId();
         String inlineQueryText = inlineQuery.getQuery();
+
+        User user = inlineQuery.getFrom();
 
         log.info("Fetching results");
         log.info(inlineQueryId);
@@ -71,13 +72,14 @@ public class BoopTheSnootInlineQueryProcessor {
         } else if (inlineQueryText.equalsIgnoreCase("sticker")) {
             List<String> doggoStickerIds = Stream
                     .generate(() -> {
+                        String randStickerSetName = stickerSetNames
+                                .get(new Random().nextInt(stickerSetNames.size()));
                         try {
-                            String randStickerSetName = stickerSetNames
-                                    .get(new Random().nextInt(stickerSetNames.size()));
                             List<Sticker> stickerSet = absSender
                                     .execute(new GetStickerSet(randStickerSetName)).getStickers();
                             return stickerSet.get(new Random().nextInt(stickerSet.size())).getFileId();
                         } catch (TelegramApiException e) {
+                            log.error("Unable to get sticker set with name {}", randStickerSetName);
                             e.printStackTrace();
                         }
                         return null;
@@ -98,6 +100,11 @@ public class BoopTheSnootInlineQueryProcessor {
                     .build()
             );
         } catch (TelegramApiException e) {
+            log.error(
+                    "Unable to answer inline query to the user {} with ID {}",
+                    user.getFirstName() + " " + user.getLastName(),
+                    user.getId()
+            );
             e.printStackTrace();
         }
     }
