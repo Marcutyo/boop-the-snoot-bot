@@ -17,9 +17,18 @@ _Future release is planned to allow **inline mode**._
 - `/boop_sticker` to get a random 𝒹𝑜𝑔𝑔𝑜 sticker
 - `/boop_the_snoot` to get a random 𝒹𝑜𝑔𝑔𝑜 (pic, GIF, or sticker)
 
+### Inline mode
+My bot now supports inline mode! Feel free to spread your love in your private chats. You just have to type `@boop_the_snoot_bot`
+followed by one of the following words:
+- `pic` to get three random 𝒹𝑜𝑔𝑔𝑜 pics
+- `vid` to get three random 𝒹𝑜𝑔𝑔𝑜 vids
+- `sticker` to get three random 𝒹𝑜𝑔𝑔𝑜 pics
+
+(e.g. `@boop_the_snoot_bot pic`)
+
 ## Special thanks
 - to [@rubenlagus](https://github.com/rubenlagus) for his exhaustive
-[TelegramBots](https://github.com/rubenlagus/TelegramBots) Java library.
+  [TelegramBots](https://github.com/rubenlagus/TelegramBots) Java library.
 - to [@AdenFlorian](https://github.com/AdenFlorian) for its website <https://random.dog> which the API calls are based upon.
 
 ## License
