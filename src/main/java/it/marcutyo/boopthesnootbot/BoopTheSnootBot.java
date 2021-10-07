@@ -29,8 +29,8 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     private final BoopTheSnootInlineQueryProcessor boopTheSnootInlineQueryProcessor;
 
     public BoopTheSnootBot(
-            @Value("${test-bot.name}") String botUsername,
-            @Value("${test-bot.api-key}") String apiKey,
+            @Value("${my-bot.name}") String botUsername,
+            @Value("${my-bot.api-key}") String apiKey,
             BoopTheSnootBotProcessor boopTheSnootBotProcessor,
             BoopTheSnootInlineQueryProcessor boopTheSnootInlineQueryProcessor) {
         super(new DefaultBotOptions(), true);
