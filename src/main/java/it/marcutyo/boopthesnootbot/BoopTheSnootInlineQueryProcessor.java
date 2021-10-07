@@ -40,14 +40,13 @@ public class BoopTheSnootInlineQueryProcessor {
 
         User user = inlineQuery.getFrom();
 
-        log.info("Fetching results");
-        log.info(inlineQueryId);
-        log.info(inlineQuery.getQuery());
-
-
         List<InlineQueryResult> inlineQueryResults = new ArrayList<>();
 
+        log.info("Received inline query with id {} with text '{}' from user {} with ID {}.",
+                inlineQueryId, inlineQueryText, user.getFirstName() + user.getLastName(), user.getId());
+
         if (inlineQueryText.equalsIgnoreCase("pic")) {
+            log.info("Fetching pics...");
             List<String> doggoUrls = Stream.generate(() -> clientComponent.getDoggoUrl("jpg,jpeg,png"))
                     .limit(3).collect(Collectors.toList());
 
@@ -58,7 +57,9 @@ public class BoopTheSnootInlineQueryProcessor {
                             .thumbUrl(doggoUrl)
                             .build()
             ));
+            log.info("Successfully fetched pics.");
         } else if (inlineQueryText.equalsIgnoreCase("vid")) {
+            log.info("Fetching vids...");
             List<String> doggoUrls = Stream.generate(() -> clientComponent.getDoggoUrl("mp4,gif"))
                     .distinct().limit(3).collect(Collectors.toList());
 
@@ -69,7 +70,9 @@ public class BoopTheSnootInlineQueryProcessor {
                             .thumbUrl(doggoUrl)
                             .build()
             ));
+            log.info("Successfully fetched vids.");
         } else if (inlineQueryText.equalsIgnoreCase("sticker")) {
+            log.info("Fetching stickers...");
             List<String> doggoStickerIds = Stream
                     .generate(() -> {
                         String randStickerSetName = stickerSetNames
@@ -91,13 +94,21 @@ public class BoopTheSnootInlineQueryProcessor {
                             .stickerFileId(doggoStickerId)
                             .build()
             ));
+            log.info("Successfully fetched stickers.");
         }
         try {
+            log.info("Answering query...");
             absSender.execute(AnswerInlineQuery.builder()
                     .inlineQueryId(inlineQueryId)
                     .results(inlineQueryResults)
                     .cacheTime(15)
                     .build()
+            );
+            log.info(
+                    "Successfully answered query with ID {} to the user {} with ID {}",
+                    inlineQueryId,
+                    user.getFirstName() + " " + user.getLastName(),
+                    user.getId()
             );
         } catch (TelegramApiException e) {
             log.error(
