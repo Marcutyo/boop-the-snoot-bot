@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +35,6 @@ public class BoopTheSnootInlineQueryProcessor {
         log.info("Fetching results");
         log.info(inlineQueryId);
         log.info(inlineQuery.getQuery());
-
 
 
         List<InlineQueryResult> inlineQueryResults = new ArrayList<>();
@@ -63,7 +61,7 @@ public class BoopTheSnootInlineQueryProcessor {
                             .thumbUrl(doggoUrl)
                             .build()
             ));
-        } else return;
+        }
         try {
             absSender.execute(AnswerInlineQuery.builder()
                     .inlineQueryId(inlineQueryId)
@@ -75,5 +73,4 @@ public class BoopTheSnootInlineQueryProcessor {
             e.printStackTrace();
         }
     }
-
 }
