@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import javax.annotation.PostConstruct;
@@ -18,15 +19,18 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     private final String apiKey;
 
     private final BoopTheSnootBotProcessor boopTheSnootBotProcessor;
+    private final BoopTheSnootInlineQueryProcessor boopTheSnootInlineQueryProcessor;
 
     public BoopTheSnootBot(
             @Value("${my-bot.name}") String botUsername,
             @Value("${my-bot.api-key}") String apiKey,
-            BoopTheSnootBotProcessor boopTheSnootBotProcessor) {
+            BoopTheSnootBotProcessor boopTheSnootBotProcessor,
+            BoopTheSnootInlineQueryProcessor boopTheSnootInlineQueryProcessor) {
         super(new DefaultBotOptions(), true);
         this.botUsername = botUsername;
         this.apiKey = apiKey;
         this.boopTheSnootBotProcessor = boopTheSnootBotProcessor;
+        this.boopTheSnootInlineQueryProcessor = boopTheSnootInlineQueryProcessor;
     }
 
     @PostConstruct
@@ -42,13 +46,28 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     }
 
     private void processDefaultCommand(AbsSender absSender, Message message) {
+        log.info("Processing default command.");
         getRegisteredCommand("help").processMessage(absSender, message, new String[]{});
         log.info("Processed default command.");
     }
 
+    private void processInlineQuery(InlineQuery inlineQuery) {
+        log.info("User update is an inline query. Processing.");
+        boopTheSnootInlineQueryProcessor.processInlineQuery(this, inlineQuery);
+        log.info("Processed inline query.");
+    }
+
     @Override
     public void processNonCommandUpdate(Update update) {
-        log.info("User typed not valid command.");
+        log.info("User message is not a command.");
+        if (update.hasInlineQuery()) {
+            processInlineQuery(update.getInlineQuery());
+            return;
+        }
+        if (update.getMessage().isReply() || update.getMessage().hasViaBot()) {
+            log.info("User message is reply or has via bot. Not processing default command.");
+            return;
+        }
         processDefaultCommand(this, update.getMessage());
     }
 
