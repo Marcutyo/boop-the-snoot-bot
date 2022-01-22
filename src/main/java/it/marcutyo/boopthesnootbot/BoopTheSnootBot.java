@@ -46,6 +46,10 @@ public class BoopTheSnootBot extends TelegramLongPollingCommandBot {
     }
 
     private void processDefaultCommand(AbsSender absSender, Message message) {
+        if ((message.isSuperGroupMessage() || message.isGroupMessage())) {
+            log.info("Chat is a group chat. Not processing unknown command.");
+            return;
+        }
         log.info("Processing default command.");
         getRegisteredCommand("help").processMessage(absSender, message, new String[]{});
         log.info("Processed default command.");
