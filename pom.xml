@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <telegrambot.version>5.3.0</telegrambot.version>
+        <telegrambot.version>5.5.0</telegrambot.version>
     </properties>
 <build>
     <plugins>
