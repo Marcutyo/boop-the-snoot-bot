@@ -13,7 +13,7 @@
 
     <groupId>it.marcutyo</groupId>
     <artifactId>boop-the-snoot-bot</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.1</version>
     <name>boop-the-snoot-bot</name>
     <description>Telegram bot to get random doggo pics, vids and stickers</description>
 
